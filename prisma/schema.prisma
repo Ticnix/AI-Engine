@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// 用户表
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String?
+  password  String    // 密码哈希值
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  apps      App[]
+  workflows Workflow[]
+  documents Document[]
+}
+
+// AI 应用表（智能体）
+model App {
+  id          String    @id @default(uuid())
+  name        String
+  description String?   // 应用描述
+  prompt      String?   // 系统提示词
+  model       String?   // 使用的模型
+  workflowId  String?   // 关联的工作流 ID（可选）
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  workflow    Workflow? @relation(fields: [workflowId], references: [id], onDelete: SetNull)
+  chats       Chat[]
+  documents   AppDocument[] // 关联的知识库文档
+}
+
+// 对话记录表
+model Chat {
+  id        String    @id @default(uuid())
+  appId     String
+  app       App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+  title     String    @default("新对话")  // 对话标题
+  tokens    Int       @default(0)         // Token消耗统计
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[] // 对话中的所有消息
+}
+
+// 消息表（支持多轮对话）
+model Message {
+  id        String    @id @default(uuid())
+  chatId    String
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role      String    // "user" 或 "assistant"
+  content   String    // 消息内容
+  createdAt DateTime  @default(now())
+}
+
+// 文档表（知识库）
+model Document {
+  id          String    @id @default(uuid())
+  name        String                        // 系统生成的唯一文件名
+  originalName String                       // 用户上传的原始文件名
+  type        String                        // 文件类型 (pdf/md)
+  size        Int                           // 文件大小（字节）
+  path        String                        // 物理存储路径
+  content     String?                       // 解析后的文本内容
+  status      String    @default("pending") // pending/processing/completed/error/embedding
+  error       String?                       // 错误信息
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String?                       // 上传者
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  apps        AppDocument[]  // 关联的智能体
+  chunks      DocumentChunk[] // 文档分块
+}
+
+// 智能体-文档关联表（多对多）
+model AppDocument {
+  id         String   @id @default(uuid())
+  appId      String
+  documentId String
+  createdAt  DateTime @default(now())
+
+  app       App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+  document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([appId, documentId]) // 防止重复关联
+}
+
+// 文档分块表（存储向量嵌入）
+model DocumentChunk {
+  id           String   @id @default(uuid())
+  documentId   String
+  chunkIndex   Int      // 分块序号
+  content      String   // 分块文本内容
+  embedding    String?  // 向量嵌入 (JSON 数组存储)
+  tokenCount   Int      // Token 数量估算
+  createdAt    DateTime @default(now())
+
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+// ========== 工作流模块 ==========
+
+// 工作流定义表
+model Workflow {
+  id          String   @id @default(uuid())
+  name        String                         // 工作流名称
+  description String?                        // 描述
+  status      String   @default("draft")     // draft / published / archived
+  nodes       Json                           // 节点列表 [{id, type, position, data}]
+  edges       Json                           // 连线列表 [{id, source, target, sourceHandle, targetHandle}]
+  userId      String?                        // 创建者
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  apps        App[]                          // 关联的智能体
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  executions  WorkflowExecution[]
+}
+
+// 工作流执行记录表
+model WorkflowExecution {
+  id           String   @id @default(uuid())
+  workflowId   String
+  workflow     Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  status       String   @default("running")  // running / completed / failed / cancelled
+  input        Json?                          // 触发输入
+  output       Json?                          // 最终输出
+  error        String?                        // 错误信息
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+  nodeExecutions NodeExecution[]
+}
+
+// 节点执行详情表
+model NodeExecution {
+  id            String   @id @default(uuid())
+  executionId   String
+  execution     WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  nodeId        String                         // 对应 Workflow.nodes 中的节点 id
+  nodeType      String                         // 节点类型
+  status        String   @default("pending")   // pending / running / completed / failed / skipped
+  input         Json?                          // 节点输入
+  output        Json?                          // 节点输出
+  error         String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+
+  @@index([executionId])
+}
