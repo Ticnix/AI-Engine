@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 const { Text } = Typography;
 
 interface SystemInfo {
-  ollama: {
+  zhipu: {
     running: boolean;
-    url: string;
+    baseUrl: string;
     defaultModel: string;
     models: string[];
   };
@@ -114,25 +114,25 @@ export default function SettingsPage() {
           }
         >
           <Descriptions column={1} size="middle">
-            <Descriptions.Item label="Ollama 服务">
-              {info && statusTag(info.ollama.running)}
+            <Descriptions.Item label="智谱 AI 服务">
+              {info && statusTag(info.zhipu.running)}
               {!info && <Text type="secondary">未知</Text>}
             </Descriptions.Item>
             <Descriptions.Item label="服务地址">
-              <Text code>{info?.ollama.url || "http://localhost:11434"}</Text>
+              <Text code>{info?.zhipu.baseUrl || "https://open.bigmodel.cn/api/paas/v4"}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="默认模型">
-              <Text code>{info?.ollama.defaultModel || "qwen2.5:7b"}</Text>
+              <Text code>{info?.zhipu.defaultModel || "glm-4.5-flash"}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="已加载模型">
-              {info?.ollama.models && info.ollama.models.length > 0 ? (
+            <Descriptions.Item label="可用模型">
+              {info?.zhipu.models && info.zhipu.models.length > 0 ? (
                 <Space wrap>
-                  {info.ollama.models.map((m) => (
+                  {info.zhipu.models.map((m) => (
                     <Tag key={m} color="blue">{m}</Tag>
                   ))}
                 </Space>
               ) : (
-                <Text type="secondary">{info?.ollama.running ? "未加载模型" : "服务未运行，无法获取模型列表"}</Text>
+                <Text type="secondary">{info?.zhipu.running ? "未获取到模型" : "API Key 未配置"}</Text>
               )}
             </Descriptions.Item>
           </Descriptions>

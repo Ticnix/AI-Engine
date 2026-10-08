@@ -100,9 +100,9 @@ function LLMConfig({ config, onChange, apps }: { config: Record<string, unknown>
       <div className="config-field">
         <label>模型</label>
         <Input
-          value={(config.model as string) || "qwen2.5:7b"}
+          value={(config.model as string) || "glm-4.5-flash"}
           onChange={(e) => onChange("model", e.target.value)}
-          placeholder="Ollama 模型名称"
+          placeholder="智谱模型名称（如 glm-4.5-flash）"
         />
       </div>
       <div className="config-field">
@@ -274,9 +274,9 @@ function IntentConfig({ config, onChange, apps }: { config: Record<string, unkno
       <div className="config-field">
         <label>模型</label>
         <Input
-          value={(config.model as string) || "qwen2.5:7b"}
+          value={(config.model as string) || "glm-4.5-flash"}
           onChange={(e) => onChange("model", e.target.value)}
-          placeholder="Ollama 模型名称"
+          placeholder="智谱模型名称（如 glm-4.5-flash）"
         />
       </div>
       <div className="config-field">

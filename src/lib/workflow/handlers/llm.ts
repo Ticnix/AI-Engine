@@ -1,7 +1,7 @@
 // LLM 节点: 调用 AI 模型生成回答
 import type { WorkflowNode, ExecutionContext, NodeOutput } from "../types";
 import { resolveVariablesInString } from "../variable";
-import { chat, type ChatMessage } from "../../ollama";
+import { chat, type ChatMessage } from "../../zhipu";
 
 interface LLMConfig {
   model?: string;
@@ -40,8 +40,8 @@ export async function execute(
     }
     messages.push({ role: "user", content: userPrompt });
 
-    // 调用 Ollama
-    const model = config.model || process.env.OLLAMA_MODEL || "qwen2.5:7b";
+    // 调用智谱 AI
+    const model = config.model || process.env.ZHIPU_MODEL || "glm-4.5-flash";
     const response = await chat(messages, model);
 
     return {

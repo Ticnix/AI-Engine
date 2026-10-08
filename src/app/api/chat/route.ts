@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { streamChat, ChatMessage, checkOllamaStatus } from "@/lib/ollama";
+import { streamChat, ChatMessage, checkZhipuStatus } from "@/lib/zhipu";
 import { getEmbedding, cosineSimilarity } from "@/lib/embedding";
 import { executeWorkflow, type ExecutionEvent } from "@/lib/workflow/engine";
 import { getCurrentUserId } from "@/lib/auth";
@@ -18,7 +18,7 @@ async function retrieveRelevantChunks(
   query: string,
   appId: string,
   topK: number = 5,
-  threshold: number = 0.5
+  threshold: number = 0.35
 ): Promise<RetrievalResult[]> {
   try {
     // 获取查询向量
@@ -100,10 +100,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "智能体不存在或无权访问" }, { status: 403 });
     }
 
-    // 检查 Ollama 服务状态
-    const ollamaStatus = await checkOllamaStatus();
-    if (!ollamaStatus.running) {
-      // Ollama 未运行，使用模拟响应
+    // 检查智谱 AI 服务状态
+    const zhipuStatus = checkZhipuStatus();
+    if (!zhipuStatus.running) {
+      // 未配置 API Key，使用模拟响应
       return handleMockResponse(appId, message, chatId);
     }
 
@@ -216,7 +216,8 @@ ${contextText ? contextText + "\n\n如果参考文档中没有相关信息，请
       async start(controller) {
         try {
           await streamChat({
-            model: ollamaStatus.models.includes(app.model || "") ? app.model : "qwen2.5:7b",
+            // 仅当智能体配置了智谱模型时才使用，否则回退到默认模型
+            model: app.model && app.model.startsWith("glm") ? app.model : process.env.ZHIPU_MODEL || "glm-4.5-flash",
             messages,
             onToken: (token) => {
               // 发送 SSE 数据
@@ -277,7 +278,7 @@ ${contextText ? contextText + "\n\n如果参考文档中没有相关信息，请
   }
 }
 
-// Ollama 未运行时的模拟响应
+// 智谱 AI 不可用时的模拟响应
 async function handleMockResponse(
   appId: string,
   message: string,
@@ -348,14 +349,14 @@ function generateMockResponse(userMessage: string): string {
   const lowerMessage = userMessage.toLowerCase();
 
   if (lowerMessage.includes("你好") || lowerMessage.includes("hello")) {
-    return "你好！我是你的 AI 助手。由于 Ollama 服务未启动，当前使用模拟响应。请启动 Ollama 服务以获得真实的 AI 回复。";
+    return "你好！我是你的 AI 助手。由于智谱 AI 服务未配置，当前使用模拟响应。请在 .env 中配置 ZHIPU_API_KEY 以获得真实的 AI 回复。";
   }
 
   if (lowerMessage.includes("帮助") || lowerMessage.includes("help")) {
-    return "我可以帮你回答问题、生成内容等。当前是模拟模式，请启动 Ollama 服务（运行 `ollama serve`）以获得真实的 AI 回复。";
+    return "我可以帮你回答问题、生成内容等。当前是模拟模式，请在 .env 中配置智谱 AI 的 ZHIPU_API_KEY 以获得真实的 AI 回复。";
   }
 
-  return `感谢你的提问！这是一个模拟响应。\n\n⚠️ Ollama 服务未启动，请运行以下命令启动：\n1. ollama serve\n2. ollama pull qwen2.5:7b\n\n启动后即可获得真实的 AI 回复。`;
+  return `感谢你的提问！这是一个模拟响应。\n\n⚠️ 智谱 AI 服务未配置，请在 .env 中添加：\nZHIPU_API_KEY=你的API密钥\n\n配置后即可获得真实的 AI 回复。`;
 }
 
 // App 类型定义
@@ -415,7 +416,7 @@ ${contextText ? contextText + "\n\n如果参考文档中没有相关信息，请
   messages.push({ role: "user", content: message });
 
   await streamChat({
-    model: "qwen2.5:7b",
+    model: process.env.ZHIPU_MODEL || "glm-4.5-flash",
     messages,
     onToken: (token) => {
       controller.enqueue(

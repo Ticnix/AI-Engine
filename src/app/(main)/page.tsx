@@ -39,7 +39,7 @@ interface DashboardData {
 interface HealthData {
   database: { status: "error" | "ok"; message: string };
   api: { status: "error" | "ok"; message: string };
-  ollama: { status: "error" | "ok"; message: string };
+  zhipu: { status: "error" | "ok"; message: string };
 }
 
 const statsMeta = [
@@ -66,7 +66,7 @@ const quickActions = [
 const systemStatusMeta = [
   { key: "database" as const, label: "数据库", icon: <DatabaseOutlined /> },
   { key: "api" as const, label: "API 服务", icon: <ApiOutlined /> },
-  { key: "ollama" as const, label: "Ollama", icon: <CloudServerOutlined /> },
+  { key: "zhipu" as const, label: "智谱 AI", icon: <CloudServerOutlined /> },
 ];
 
 function formatTime(iso: string): string {
@@ -102,7 +102,7 @@ export default function HomePage() {
         const errors: string[] = [];
         if (h?.database?.status === "error") errors.push("数据库");
         if (h?.api?.status === "error") errors.push("API 服务");
-        if (h?.ollama?.status === "error") errors.push("Ollama");
+        if (h?.zhipu?.status === "error") errors.push("智谱 AI");
 
         if (errors.length > 0) {
           message.warning({

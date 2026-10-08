@@ -7,11 +7,12 @@ import { api } from "@/lib/request";
 import DocumentSelector from "@/components/document/document-selector";
 
 const models = [
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
-  { value: "gpt-4", label: "GPT-4" },
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { value: "claude-3-opus", label: "Claude 3 Opus" },
-  { value: "claude-3-sonnet", label: "Claude 3 Sonnet" },
+  { value: "glm-4.5-flash", label: "GLM-4.5-Flash（免费）" },
+  { value: "glm-4-flash", label: "GLM-4-Flash（免费）" },
+  { value: "glm-4.5-air", label: "GLM-4.5-Air" },
+  { value: "glm-4.5", label: "GLM-4.5" },
+  { value: "glm-4.6", label: "GLM-4.6" },
+  { value: "glm-4-plus", label: "GLM-4-Plus" },
 ];
 
 interface AppDetail {
@@ -82,7 +83,7 @@ export default function EditAppPage() {
       form.setFieldsValue({
         name: data.name,
         description: data.description,
-        model: data.model || "gpt-3.5-turbo",
+        model: data.model || "glm-4.5-flash",
         prompt: data.prompt,
         workflowId: data.workflowId,
       });

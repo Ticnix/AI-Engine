@@ -1,25 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
-import { unlink, readFile } from "fs/promises";
-import { existsSync } from "fs";
-
-// PDF 解析函数
-async function parsePdf(filePath: string): Promise<string> {
-  // 动态导入 pdf-parse，处理 ESM 兼容性
-  const pdfParseModule = await import("pdf-parse");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pdfParse = (pdfParseModule as any).default || pdfParseModule;
-  const dataBuffer = await readFile(filePath);
-  const data = await pdfParse(dataBuffer);
-  return data.text;
-}
-
-// Markdown 解析函数
-async function parseMarkdown(filePath: string): Promise<string> {
-  const content = await readFile(filePath, "utf-8");
-  return content;
-}
+import { parseDocumentData } from "@/lib/document-parser";
 
 // GET: 获取文档详情（包含内容）
 export async function GET(
@@ -38,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "文档不存在或无权访问" }, { status: 404 });
     }
 
-    // 如果内容未解析，尝试解析
+    // 如果内容未解析，尝试从数据库中的原始文件内容解析
     if (!document.content && document.status === "pending") {
       try {
         // 更新状态为处理中
@@ -47,13 +29,12 @@ export async function GET(
           data: { status: "processing" },
         });
 
-        // 解析文件内容
-        let content: string;
-        if (document.type === "pdf") {
-          content = await parsePdf(document.path);
-        } else {
-          content = await parseMarkdown(document.path);
+        if (!document.fileData) {
+          throw new Error("文档内容缺失");
         }
+
+        // 解析文件内容
+        const content = await parseDocumentData(document.type, document.fileData);
 
         // 更新内容和状态
         const updated = await prisma.document.update({
@@ -106,12 +87,7 @@ export async function DELETE(
       return NextResponse.json({ error: "文档不存在或无权访问" }, { status: 404 });
     }
 
-    // 删除物理文件
-    if (existsSync(document.path)) {
-      await unlink(document.path);
-    }
-
-    // 删除数据库记录
+    // 删除数据库记录（级联删除分块与关联）
     await prisma.document.delete({
       where: { id },
     });

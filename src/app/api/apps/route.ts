@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       data: {
         name,
         description: description || null,
-        model: model || "gpt-3.5-turbo",
+        model: model || "glm-4.5-flash",
         prompt: prompt || null,
         workflowId: workflowId || null,
         userId: userId || null,

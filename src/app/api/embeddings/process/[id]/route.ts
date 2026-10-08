@@ -3,18 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
 import { chunkText } from "@/lib/chunking";
 import { getEmbedding } from "@/lib/embedding";
-import { readFile } from "fs/promises";
-import { existsSync } from "fs";
-
-// PDF 解析函数
-async function parsePdf(filePath: string): Promise<string> {
-  const pdfParseModule = await import("pdf-parse");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pdfParse = (pdfParseModule as any).default || pdfParseModule;
-  const dataBuffer = await readFile(filePath);
-  const data = await pdfParse(dataBuffer);
-  return data.text;
-}
+import { parseDocumentData } from "@/lib/document-parser";
 
 // 处理文档：分块 + 向量化
 export async function POST(
@@ -40,19 +29,15 @@ export async function POST(
     });
 
     try {
-      // 1. 获取文档内容
+      // 1. 获取文档内容（优先使用已解析文本，否则从数据库中的原始文件解析）
       let content = document.content;
 
       if (!content) {
-        if (!existsSync(document.path)) {
-          throw new Error("文档文件不存在");
+        if (!document.fileData) {
+          throw new Error("文档内容缺失，请重新上传");
         }
 
-        if (document.type === "pdf") {
-          content = await parsePdf(document.path);
-        } else {
-          content = await readFile(document.path, "utf-8");
-        }
+        content = await parseDocumentData(document.type, document.fileData);
 
         // 保存解析后的内容
         await prisma.document.update({

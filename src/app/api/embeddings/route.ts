@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/auth";
 import { getEmbedding, cosineSimilarity } from "@/lib/embedding";
 
 // 向量检索 API
@@ -7,7 +8,7 @@ export async function POST(request: Request) {
   try {
     const userId = await getCurrentUserId();
     const body = await request.json();
-    const { query, appId, topK = 5, threshold = 0.5 } = body;
+    const { query, appId, topK = 5, threshold = 0.35 } = body;
 
     if (!query || query.trim().length === 0) {
       return NextResponse.json({ error: "查询内容不能为空" }, { status: 400 });
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
     // 获取查询向量
     const queryEmbedding = await getEmbedding(query);
     if (!queryEmbedding) {
-      return NextResponse.json({ error: "生成查询向量失败，请确保 Ollama 服务正常运行" }, { status: 500 });
+      return NextResponse.json({ error: "生成查询向量失败，请确保已配置智谱 AI 的 ZHIPU_API_KEY" }, { status: 500 });
     }
 
     // 构建查询条件

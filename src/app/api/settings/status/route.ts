@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkOllamaStatus } from "@/lib/ollama";
+import { checkZhipuStatus } from "@/lib/zhipu";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
 
@@ -14,25 +14,24 @@ export async function GET() {
     });
     const appIds = apps.map((a) => a.id);
 
-    const [ollamaStatus, stats] = await Promise.all([
-      checkOllamaStatus(),
-      {
-        apps: await prisma.app.count({ where: { userId: userId || undefined } }),
-        chats: await prisma.chat.count({ where: { appId: appIds.length > 0 ? { in: appIds } : undefined } }),
-        docs: await prisma.document.count({ where: { userId: userId || undefined } }),
-        workflows: await prisma.workflow.count({ where: { userId: userId || undefined } }),
-        executions: await prisma.workflowExecution.count({
-          where: { workflow: { userId: userId || undefined } },
-        }),
-      },
-    ]);
+    const zhipuStatus = checkZhipuStatus();
+
+    const stats = {
+      apps: await prisma.app.count({ where: { userId: userId || undefined } }),
+      chats: await prisma.chat.count({ where: { appId: appIds.length > 0 ? { in: appIds } : undefined } }),
+      docs: await prisma.document.count({ where: { userId: userId || undefined } }),
+      workflows: await prisma.workflow.count({ where: { userId: userId || undefined } }),
+      executions: await prisma.workflowExecution.count({
+        where: { workflow: { userId: userId || undefined } },
+      }),
+    };
 
     return NextResponse.json({
-      ollama: {
-        running: ollamaStatus.running,
-        url: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
-        defaultModel: process.env.OLLAMA_MODEL || "qwen2.5:7b",
-        models: ollamaStatus.models,
+      zhipu: {
+        running: zhipuStatus.running,
+        baseUrl: process.env.ZHIPU_BASE_URL || "https://open.bigmodel.cn/api/paas/v4",
+        defaultModel: process.env.ZHIPU_MODEL || "glm-4.5-flash",
+        models: zhipuStatus.models,
       },
       stats,
     });

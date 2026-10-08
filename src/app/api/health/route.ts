@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { checkOllamaStatus } from "@/lib/ollama";
+import { checkZhipuStatus } from "@/lib/zhipu";
 
 export async function GET() {
   const result = {
     database: { status: "error" as "error" | "ok", message: "" },
     api: { status: "ok" as "error" | "ok", message: "API 服务运行中" },
-    ollama: { status: "error" as "error" | "ok", message: "" },
+    zhipu: { status: "error" as "error" | "ok", message: "" },
   };
 
   // 1. 检测数据库连接
@@ -19,17 +19,17 @@ export async function GET() {
 
   // 2. API 服务始终为 ok（能执行到此说明 API 正常）
 
-  // 3. 检测 Ollama 服务
+  // 3. 检测智谱 AI 服务
   try {
-    const ollama = await checkOllamaStatus();
-    result.ollama = {
-      status: ollama.running ? "ok" : "error",
-      message: ollama.running
-        ? `${ollama.models.length} 个模型可用`
-        : "服务未启动",
+    const zhipu = checkZhipuStatus();
+    result.zhipu = {
+      status: zhipu.running ? "ok" : "error",
+      message: zhipu.running
+        ? `${zhipu.models.length} 个模型可用`
+        : "API Key 未配置",
     };
   } catch {
-    result.ollama = { status: "error", message: "服务未启动" };
+    result.zhipu = { status: "error", message: "服务未配置" };
   }
 
   // 如果数据库不通，API 服务也算异常

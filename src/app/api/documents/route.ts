@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-
-// 文件存储目录
-const UPLOAD_DIR = path.join(process.cwd(), "uploads", "documents");
+import { parseDocumentData } from "@/lib/document-parser";
 
 // 支持的文件类型
 const ALLOWED_TYPES: Record<string, string> = {
@@ -17,31 +12,6 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 // 文件大小限制 (10MB)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
-// 确保上传目录存在
-async function ensureUploadDir() {
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true });
-  }
-}
-
-// PDF 解析函数
-async function parsePdf(filePath: string): Promise<string> {
-  const pdfParseModule = await import("pdf-parse");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pdfParse = (pdfParseModule as any).default || pdfParseModule;
-  const { readFile } = await import("fs/promises");
-  const dataBuffer = await readFile(filePath);
-  const data = await pdfParse(dataBuffer);
-  return data.text;
-}
-
-// Markdown 解析函数
-async function parseMarkdown(filePath: string): Promise<string> {
-  const { readFile } = await import("fs/promises");
-  const content = await readFile(filePath, "utf-8");
-  return content;
-}
 
 // GET: 获取文档列表（当前用户的文档）
 export async function GET() {
@@ -68,7 +38,7 @@ export async function GET() {
   }
 }
 
-// POST: 上传文档
+// POST: 上传文档（文件内容存入数据库，适配 Serverless 环境）
 export async function POST(request: Request) {
   try {
     const userId = await getCurrentUserId();
@@ -106,14 +76,10 @@ export async function POST(request: Request) {
     const ext = actualType === "pdf" ? ".pdf" : ".md";
     const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
 
-    // 确保目录存在
-    await ensureUploadDir();
-
-    // 保存文件
-    const filePath = path.join(UPLOAD_DIR, uniqueName);
+    // 读取文件内容并以 base64 存入数据库
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    const fileDataBase64 = buffer.toString("base64");
 
     // 创建数据库记录
     const document = await prisma.document.create({
@@ -122,25 +88,37 @@ export async function POST(request: Request) {
         originalName: file.name,
         type: actualType,
         size: file.size,
-        path: filePath,
+        fileData: fileDataBase64,
         status: "pending",
         userId: userId || undefined,
       },
     });
 
-    // 自动触发解析（不阻塞上传响应）
-    parseDocument(document.id).catch((err) =>
-      console.error("自动解析失败:", err)
-    );
+    // 同步解析文档内容（Serverless 环境中后台任务可能被终止，因此不使用 fire-and-forget）
+    await parseDocument(document.id);
 
-    return NextResponse.json(document, { status: 201 });
+    const updated = await prisma.document.findUnique({
+      where: { id: document.id },
+      select: {
+        id: true,
+        name: true,
+        originalName: true,
+        type: true,
+        size: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return NextResponse.json(updated, { status: 201 });
   } catch (error) {
     console.error("上传文档失败:", error);
     return NextResponse.json({ error: "上传失败" }, { status: 500 });
   }
 }
 
-// 后台解析文档
+// 解析文档：从数据库中的原始文件内容解析文本并保存
 async function parseDocument(id: string) {
   const document = await prisma.document.findUnique({ where: { id } });
   if (!document) return;
@@ -151,12 +129,11 @@ async function parseDocument(id: string) {
   });
 
   try {
-    let content: string;
-    if (document.type === "pdf") {
-      content = await parsePdf(document.path);
-    } else {
-      content = await parseMarkdown(document.path);
+    if (!document.fileData) {
+      throw new Error("文档内容缺失");
     }
+
+    const content = await parseDocumentData(document.type, document.fileData);
 
     if (!content || content.trim().length === 0) {
       throw new Error("文档内容为空");

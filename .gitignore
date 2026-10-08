@@ -46,3 +46,7 @@ next-env.d.ts
 /uploads/
 "node_modules/" 
 ".env" 
+
+# local logs & tool data
+dev-server.log
+.codebuddy/
