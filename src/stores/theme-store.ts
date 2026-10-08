@@ -12,7 +12,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      mode: "dark",
+      mode: "light",
       toggleTheme: () =>
         set((state) => ({
           mode: state.mode === "dark" ? "light" : "dark",
@@ -21,6 +21,9 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: "theme-storage",
+      version: 1,
+      // v1: 默认主题改为日光模式（迁移时重置为 light）
+      migrate: () => ({ mode: "light" as ThemeMode }),
     }
   )
 );

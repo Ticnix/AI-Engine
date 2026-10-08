@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
+import { useThemeStore } from "@/stores/theme-store";
 
 type LoginFormValues = {
   email: string;
@@ -55,9 +56,46 @@ const darkTheme = {
   },
 };
 
+// Ant Design 日间主题配置
+const lightTheme = {
+  token: {
+    colorPrimary: "#00b894",
+    colorBgContainer: "rgba(255, 255, 255, 0.85)",
+    colorBorder: "#d9d9d9",
+    colorText: "rgba(0, 0, 0, 0.85)",
+    colorTextPlaceholder: "rgba(0, 0, 0, 0.35)",
+    borderRadius: 8,
+  },
+  components: {
+    Input: {
+      colorBgContainer: "rgba(255, 255, 255, 0.85)",
+      colorBorder: "#d9d9d9",
+      colorText: "rgba(0, 0, 0, 0.85)",
+      colorTextPlaceholder: "rgba(0, 0, 0, 0.35)",
+    },
+    Button: {
+      primaryColor: "#ffffff",
+    },
+    Tabs: {
+      colorText: "rgba(0, 0, 0, 0.45)",
+      colorTextActive: "#00b894",
+      inkBarColor: "#00b894",
+    },
+    Checkbox: {
+      colorPrimary: "#00b894",
+      colorPrimaryHover: "#00a383",
+    },
+    Form: {
+      labelColor: "rgba(0, 0, 0, 0.7)",
+      colorError: "#ff4d4f",
+    },
+  },
+};
+
 export function AuthCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const mode = useThemeStore((state) => state.mode);
   const setUser = useAuthStore((state) => state.setUser);
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
@@ -279,7 +317,7 @@ export function AuthCard() {
   ];
 
   return (
-    <ConfigProvider theme={darkTheme}>
+    <ConfigProvider theme={mode === "light" ? lightTheme : darkTheme}>
       <div className="glass-card p-8 w-full max-w-md">
         <h1 className="auth-title">AI 应用引擎</h1>
         <p className="auth-subtitle">登录或注册以开始使用</p>
@@ -292,7 +330,7 @@ export function AuthCard() {
         />
 
         <div className="mt-4 text-center">
-          <p className="text-sm text-white/40">
+          <p className="auth-footer-text">
             登录即表示同意我们的服务条款
           </p>
         </div>

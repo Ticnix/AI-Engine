@@ -185,6 +185,48 @@ body {
   font-size: 14px;
 }
 
+/* ========== 登录页 日间模式 ========== */
+.light-mode .auth-page {
+  background: linear-gradient(135deg, #eef4fb 0%, #f7fafd 50%, #eaf6f3 100%);
+}
+
+.light-mode .auth-page::before {
+  opacity: 0.25;
+}
+
+.light-mode .light-spot {
+  opacity: 0.25;
+}
+
+.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.light-mode .auth-title {
+  color: #1a1a2e;
+}
+
+.light-mode .auth-subtitle {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light-mode .auth-error {
+  color: #ff4d4f;
+}
+
+.auth-footer-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.light-mode .auth-footer-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
 /* ========== Ant Design 深色主题覆盖 ========== */
 
 /* Tabs 样式 */
@@ -539,6 +581,7 @@ body {
 
 .page-container {
   max-width: 1200px;
+  margin: 0 auto;
 }
 
 .page-header {
@@ -583,6 +626,7 @@ body {
 .dashboard-container {
   padding: 24px;
   max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* 顶部标题区域 */
