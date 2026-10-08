@@ -3132,3 +3132,279 @@ body {
   stroke: #1890ff !important;
 }
 
+
+/* ============================================================
+   日间模式 · 配色增强与补全（置于文件末尾，优先生效）
+   ============================================================ */
+
+/* ---- 整体背景与布局 ---- */
+.light-mode .main-content {
+  background: linear-gradient(180deg, #f6f8fb 0%, #eef2f7 100%);
+}
+
+.light-mode .app-header {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* ---- 卡片：无边框 + 柔和阴影 + 圆角 ---- */
+.light-mode .ant-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 4px 16px rgba(16, 24, 40, 0.05);
+}
+
+.light-mode .page-card,
+.light-mode .stats-card,
+.light-mode .action-card,
+.light-mode .activity-card,
+.light-mode .status-card,
+.light-mode .chat-card {
+  border: none;
+  border-radius: 12px;
+}
+
+/* ---- 补全：活动标签（浅色底 + 彩色字） ---- */
+.light-mode .activity-tag-color-blue {
+  background: #e6f4ff;
+  color: #0958d9;
+  border: none;
+}
+
+.light-mode .activity-tag-color-green {
+  background: #f6ffed;
+  color: #389e0d;
+  border: none;
+}
+
+.light-mode .activity-tag-color-purple {
+  background: #f9f0ff;
+  color: #722ed1;
+  border: none;
+}
+
+.light-mode .activity-tag-color-orange {
+  background: #fff7e6;
+  color: #d46b08;
+  border: none;
+}
+
+/* ---- 补全：分页 ---- */
+.light-mode .ant-pagination-prev,
+.light-mode .ant-pagination-next {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.light-mode .ant-pagination-prev:hover,
+.light-mode .ant-pagination-next:hover {
+  color: #1677ff;
+}
+
+.light-mode .ant-pagination-item {
+  background: #fff;
+  border-color: #d9d9d9;
+}
+
+.light-mode .ant-pagination-item a {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.light-mode .ant-pagination-item:hover {
+  border-color: #1677ff;
+}
+
+.light-mode .ant-pagination-item:hover a {
+  color: #1677ff;
+}
+
+.light-mode .ant-pagination-item-active {
+  border-color: #1677ff;
+}
+
+.light-mode .ant-pagination-item-active a {
+  color: #1677ff;
+}
+
+.light-mode .ant-pagination-item-link {
+  background: #fff;
+  border-color: #d9d9d9;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* ---- 补全：警告提示 Alert ---- */
+.light-mode .ant-alert {
+  background: #f0f7ff;
+  border: 1px solid #d6e8ff;
+  border-radius: 8px;
+}
+
+.light-mode .ant-alert-message {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.light-mode .ant-alert-description {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* ---- 补全：通知 Notification ---- */
+.light-mode .ant-notification-notice-message {
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+
+.light-mode .ant-notification-notice-description {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+/* ---- 补全：气泡卡片 Popover / 工具提示 ---- */
+.light-mode .ant-popover-inner {
+  background: #fff;
+  border-radius: 8px;
+}
+
+.light-mode .ant-popover-title {
+  color: rgba(0, 0, 0, 0.88);
+  border-bottom-color: #f0f0f0;
+}
+
+.light-mode .ant-popover-inner-content {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* ---- 补全：日期选择器 ---- */
+.light-mode .ant-picker {
+  background: #fff;
+  border-color: #d9d9d9;
+}
+
+.light-mode .ant-picker-input {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.light-mode .ant-picker-body {
+  background: #fff;
+}
+
+.light-mode .ant-picker-cell {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.light-mode .ant-picker-dropdown .ant-picker-panel-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.12);
+}
+
+/* ---- 补全：单选框 ---- */
+.light-mode .ant-radio-wrapper {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.light-mode .ant-radio-inner {
+  background: #fff;
+  border-color: #d9d9d9;
+}
+
+/* ---- 补全：上传 / 加载中 / 列表头 / 分割线 / 密码框 ---- */
+.light-mode .ant-upload-list-item {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.light-mode .ant-upload.ant-upload-drag {
+  background: #fafbfc;
+  border-color: #d9d9d9;
+}
+
+.light-mode .ant-upload.ant-upload-drag p.ant-upload-text {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.light-mode .ant-upload.ant-upload-drag p.ant-upload-hint {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light-mode .ant-spin-text {
+  color: #1677ff;
+}
+
+.light-mode .ant-list-header {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.light-mode .ant-divider-inner-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.light-mode .ant-input-password .ant-input-suffix {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light-mode .ant-card-bordered {
+  border-color: #f0f0f0;
+}
+
+/* ---- 补全：工作流编辑器 ---- */
+.light-mode .flow-toolbar-hint {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light-mode .node-panel-hint {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light-mode .log-panel-empty {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.light-mode .workflow-node-http {
+  color: #333;
+}
+
+/* ---- 补全：表格 ---- */
+.light-mode .ant-table {
+  background: #fff;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.light-mode .ant-table-thead > tr > th {
+  background: #fafbfc;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.light-mode .ant-pagination-options .ant-select-selector {
+  background: #fff;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+/* ---- 通用文字兜底：卡片内文字在日间模式下一律深色 ---- */
+.light-mode .ant-card-body,
+.light-mode .ant-modal-body {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.light-mode .ant-form-item-label > label {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.light-mode .ant-descriptions-item-label {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.light-mode .ant-descriptions-item-content {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+/* ---- 仪表盘细节 ---- */
+.light-mode .stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(22, 119, 255, 0.12);
+  transition: all 0.25s ease;
+}
+
+.light-mode .action-card {
+  transition: all 0.25s ease;
+}
