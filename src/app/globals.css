@@ -3408,3 +3408,102 @@ body {
 .light-mode .action-card {
   transition: all 0.25s ease;
 }
+
+/* ============================================================
+   登录页 · 日间配色重做（覆盖带 !important 的夜间基础样式）
+   ============================================================ */
+
+/* 背景：彩色柔和渐变，光斑透出颜色 */
+.light-mode .auth-page {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 35%, #ede9fe 65%, #cffafe 100%);
+}
+
+.light-mode .light-spot {
+  opacity: 0.45;
+}
+
+/* 表单输入：白底 + 深色文字 + 清晰边框 */
+.light-mode .ant-input,
+.light-mode .ant-input-affix-wrapper,
+.light-mode .ant-input-password {
+  background: #fff !important;
+  border-color: #d9d9d9 !important;
+  color: #0f172a !important;
+}
+
+.light-mode .ant-input-affix-wrapper .ant-input {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+.light-mode .ant-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light-mode .ant-input-password .ant-input-suffix {
+  color: #94a3b8 !important;
+}
+
+.light-mode .ant-input-affix-wrapper:hover,
+.light-mode .ant-input:hover {
+  border-color: #1677ff !important;
+}
+
+.light-mode .ant-input-affix-wrapper-focused,
+.light-mode .ant-input:focus,
+.light-mode .ant-input-focused {
+  border-color: #1677ff !important;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12) !important;
+}
+
+/* 复选框文字 */
+.light-mode .ant-checkbox-wrapper {
+  color: #334155 !important;
+}
+
+/* 标签页：激活项用主题蓝 */
+.light-mode .auth-tabs .ant-tabs-tab {
+  color: #64748b !important;
+}
+
+.light-mode .auth-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1677ff !important;
+}
+
+.light-mode .auth-tabs .ant-tabs-ink-bar {
+  background: #1677ff !important;
+}
+
+/* 链接（忘记密码） */
+.light-mode .auth-link {
+  color: #1677ff;
+}
+
+.light-mode .auth-link:hover {
+  color: #4096ff;
+}
+
+/* 登录/注册按钮：蓝色渐变 + 白字 */
+.light-mode .gradient-btn,
+.light-mode .ant-btn-primary {
+  background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(22, 119, 255, 0.3) !important;
+}
+
+.light-mode .gradient-btn:hover,
+.light-mode .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #4096ff 0%, #1677ff 100%) !important;
+  box-shadow: 0 6px 20px rgba(22, 119, 255, 0.4) !important;
+}
+
+/* 标题与副标题配色 */
+.light-mode .auth-title {
+  color: #0f172a;
+}
+
+.light-mode .auth-subtitle {
+  color: #64748b;
+}

@@ -1,9 +1,8 @@
 "use client";
 
-import { Input, Button, Avatar, Dropdown, Badge, Space } from "antd";
+import { Input, Button, Avatar, Dropdown, Space } from "antd";
 import {
   SearchOutlined,
-  BellOutlined,
   SunOutlined,
   MoonOutlined,
   UserOutlined,
@@ -69,18 +68,9 @@ export function Header() {
         />
       </div>
 
-      {/* 右侧：通知、主题切换、用户头像 */}
+      {/* 右侧：主题切换、用户头像 */}
       <div className="header-right">
         <Space size={12}>
-          {/* 通知铃铛 */}
-          <Badge count={5} size="small">
-            <Button
-              type="text"
-              icon={<BellOutlined />}
-              className="header-icon-btn"
-            />
-          </Badge>
-
           {/* 主题切换 */}
           <Button
             type="text"
