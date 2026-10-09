@@ -1,8 +1,7 @@
 "use client";
 
 import { Card, Form, Switch, Button, Descriptions, Tag, Badge, Spin, Space, Divider, Typography } from "antd";
-import { SunOutlined, MoonOutlined, CheckCircleOutlined, CloseCircleOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useThemeStore } from "@/stores/theme-store";
+import { CheckCircleOutlined, CloseCircleOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 
 const { Text } = Typography;
@@ -24,7 +23,6 @@ interface SystemInfo {
 }
 
 export default function SettingsPage() {
-  const { mode, setTheme } = useThemeStore();
   const [info, setInfo] = useState<SystemInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -70,32 +68,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="max-w-3xl">
-        {/* 外观设置 */}
-        <Card className="page-card mb-4" title="外观设置">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <Text strong>主题模式</Text>
-              <div style={{ color: "#888", fontSize: 12 }}>切换系统的深色/浅色显示模式</div>
-            </div>
-            <Space>
-              <Button
-                type={mode === "dark" ? "primary" : "default"}
-                icon={<MoonOutlined />}
-                onClick={() => setTheme("dark")}
-              >
-                深色
-              </Button>
-              <Button
-                type={mode === "light" ? "primary" : "default"}
-                icon={<SunOutlined />}
-                onClick={() => setTheme("light")}
-              >
-                浅色
-              </Button>
-            </Space>
-          </div>
-        </Card>
-
         {/* 模型配置 */}
         <Card
           className="page-card mb-4"

@@ -3507,3 +3507,24 @@ body {
 .light-mode .auth-subtitle {
   color: #64748b;
 }
+
+/* 登录页光斑：日间用蓝/紫/粉，去掉荧光绿 */
+.light-mode .light-spot-1 {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+}
+
+.light-mode .light-spot-2 {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+}
+
+.light-mode .light-spot-3 {
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%);
+}
+
+.light-mode .light-spot-4 {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, transparent 70%);
+}
+
+.light-mode .light-spot-5 {
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.3) 0%, transparent 70%);
+}

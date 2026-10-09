@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <html lang="zh-CN" className="h-full light-mode" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
       <body className="min-h-full flex flex-col">
         <AntdProvider>{children}</AntdProvider>
       </body>

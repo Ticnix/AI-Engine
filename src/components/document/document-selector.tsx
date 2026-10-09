@@ -3,7 +3,7 @@
 import { Checkbox, Tag, Empty, Spin, Input } from "antd";
 import { FileTextOutlined, CheckCircleOutlined, ClockCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMemo, useState } from "react";
-import { useThemeStore } from "@/stores/theme-store";
+
 
 interface Document {
   id: string;
@@ -72,8 +72,7 @@ export default function DocumentSelector({
   onChange,
   loading = false,
 }: DocumentSelectorProps) {
-  const mode = useThemeStore((s) => s.mode);
-  const t = mode === "light" ? themes.light : themes.dark;
+  const t = themes.light;
   const [searchKeyword, setSearchKeyword] = useState("");
 
   // 只显示已向量化的文档

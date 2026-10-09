@@ -5,7 +5,6 @@ import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
-import { useThemeStore } from "@/stores/theme-store";
 
 type LoginFormValues = {
   email: string;
@@ -20,47 +19,11 @@ type RegisterFormValues = {
   confirmPassword: string;
 };
 
-// Ant Design 深色主题配置
-const darkTheme = {
-  token: {
-    colorPrimary: "#00ffaa",
-    colorBgContainer: "rgba(0, 0, 0, 0.3)",
-    colorBorder: "rgba(255, 255, 255, 0.1)",
-    colorText: "rgba(255, 255, 255, 0.8)",
-    colorTextPlaceholder: "rgba(255, 255, 255, 0.4)",
-    borderRadius: 8,
-  },
-  components: {
-    Input: {
-      colorBgContainer: "rgba(0, 0, 0, 0.3)",
-      colorBorder: "rgba(255, 255, 255, 0.1)",
-      colorText: "white",
-      colorTextPlaceholder: "rgba(255, 255, 255, 0.4)",
-    },
-    Button: {
-      primaryColor: "#0f0f23",
-    },
-    Tabs: {
-      colorText: "rgba(255, 255, 255, 0.5)",
-      colorTextActive: "#00ffaa",
-      inkBarColor: "#00ffaa",
-    },
-    Checkbox: {
-      colorPrimary: "#00ffaa",
-      colorPrimaryHover: "#00ddaa",
-    },
-    Form: {
-      labelColor: "rgba(255, 255, 255, 0.8)",
-      colorError: "#ff6b6b",
-    },
-  },
-};
-
 // Ant Design 日间主题配置
 const lightTheme = {
   token: {
-    colorPrimary: "#00b894",
-    colorBgContainer: "rgba(255, 255, 255, 0.85)",
+    colorPrimary: "#1677ff",
+    colorBgContainer: "#ffffff",
     colorBorder: "#d9d9d9",
     colorText: "rgba(0, 0, 0, 0.85)",
     colorTextPlaceholder: "rgba(0, 0, 0, 0.35)",
@@ -68,7 +31,7 @@ const lightTheme = {
   },
   components: {
     Input: {
-      colorBgContainer: "rgba(255, 255, 255, 0.85)",
+      colorBgContainer: "#ffffff",
       colorBorder: "#d9d9d9",
       colorText: "rgba(0, 0, 0, 0.85)",
       colorTextPlaceholder: "rgba(0, 0, 0, 0.35)",
@@ -78,12 +41,12 @@ const lightTheme = {
     },
     Tabs: {
       colorText: "rgba(0, 0, 0, 0.45)",
-      colorTextActive: "#00b894",
-      inkBarColor: "#00b894",
+      colorTextActive: "#1677ff",
+      inkBarColor: "#1677ff",
     },
     Checkbox: {
-      colorPrimary: "#00b894",
-      colorPrimaryHover: "#00a383",
+      colorPrimary: "#1677ff",
+      colorPrimaryHover: "#4096ff",
     },
     Form: {
       labelColor: "rgba(0, 0, 0, 0.7)",
@@ -95,7 +58,6 @@ const lightTheme = {
 export function AuthCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = useThemeStore((state) => state.mode);
   const setUser = useAuthStore((state) => state.setUser);
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
@@ -317,7 +279,7 @@ export function AuthCard() {
   ];
 
   return (
-    <ConfigProvider theme={mode === "light" ? lightTheme : darkTheme}>
+    <ConfigProvider theme={lightTheme}>
       <div className="glass-card p-8 w-full max-w-md">
         <h1 className="auth-title">AI 应用引擎</h1>
         <p className="auth-subtitle">登录或注册以开始使用</p>
